@@ -1,0 +1,102 @@
+{
+  "info": {
+    "name": "Subscription Plans API",
+    "description": "API CRUD pour la gestion des plans d'abonnement",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "GET - Récupérer tous les plans",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/plans",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "plans"]
+        },
+        "description": "Récupère la liste de tous les plans d'abonnement actifs"
+      }
+    },
+    {
+      "name": "GET - Récupérer un plan (id=1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/plans/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "plans", "1"]
+        },
+        "description": "Récupère un plan spécifique par son ID"
+      }
+    },
+    {
+      "name": "POST - Créer un plan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Premium\",\n    \"description\": \"Accès illimité à tous les équipements et cours\",\n    \"duration_months\": 6,\n    \"price\": 150000,\n    \"features\": \"Accès illimité, 2 séances coaching/mois, Vestiaire privé, Parking gratuit\",\n    \"is_active\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/plans",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "plans"]
+        },
+        "description": "Crée un nouveau plan d'abonnement (Admin uniquement)"
+      }
+    },
+    {
+      "name": "PUT - Modifier un plan (id=1)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Premium Plus\",\n    \"price\": 200000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/plans/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "plans", "1"]
+        },
+        "description": "Modifie partiellement un plan existant (Admin uniquement)"
+      }
+    },
+    {
+      "name": "DELETE - Supprimer un plan (id=1)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/plans/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "plans", "1"]
+        },
+        "description": "Supprime un plan d'abonnement (Admin uniquement)"
+      }
+    }
+  ]
+}
