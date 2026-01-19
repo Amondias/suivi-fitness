@@ -33,8 +33,46 @@ class ClientController extends Controller
                 });
             }
 
+        // Si il y a des filtres, retourner juste la liste
+        if ($request->filled('search') || $request->filled('gender') || $request->filled('status')) {
+            return response()->json($query->get());
+        }
 
-        return response()->json($query->get());
+        // Sinon, retourner le format structuré
+        $clients = $query->with('subscriptions')->get();
+        $total = $clients->count();
+        $activeSubscriptions = $clients->filter(function ($client) {
+            return $client->subscriptions->first() && $client->subscriptions->first()->end_date >= now();
+        })->count();
+        $expiredSubscriptions = $clients->filter(function ($client) {
+            return $client->subscriptions->first() && $client->subscriptions->first()->end_date < now();
+        })->count();
+
+        $data = $clients->map(function ($client) {
+            $subscription = $client->subscriptions->first();
+            return [
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'phone' => $client->phone,
+                'gender' => $client->gender,
+                'subscription' => $subscription ? [
+                    'plan' => $subscription->subscriptionPlan->name ?? 'N/A',
+                    'status' => $subscription->end_date >= now() ? 'active' : 'expired',
+                    'end_date' => $subscription->end_date->format('Y-m-d')
+                ] : null
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'meta' => [
+                'total' => $total,
+                'active_subscriptions' => $activeSubscriptions,
+                'expired_subscriptions' => $expiredSubscriptions
+            ]
+        ]);
     }
 
     public function create(Request $request){
