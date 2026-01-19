@@ -143,6 +143,23 @@ class ClientController extends Controller
     }
 
 
+    public function active(){
+        $query = User::where('role','client');
 
+        $query->whereHas('subscriptions', function($q){
+            $q->where('end_date', '>=', now());
+        });
 
+        return response()->json($query->get());
+    }
+
+    public function expired(){
+        $query = User::where('role','client');
+
+        $query->whereHas('subscriptions', function($q){
+            $q->where('end_date', '<', now());
+        });
+
+        return response()->json($query->get());
+    }
 }

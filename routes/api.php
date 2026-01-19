@@ -15,6 +15,10 @@ Route::put('/clients/{id}',[ClientController::class,'edit']);
 Route::delete('/clients/{id}',[ClientController::class,'delete']);
 Route::get('/clients/{id}/subscriptions',[ClientController::class,'subscriptions']);
 Route::get('/clients/{id}/payments',[ClientController::class,'payments']);
+Route::get('/clients/active',[ClientController::class,'active']);
+Route::get('/clients/expired',[ClientController::class,'expired']);
+
+
 
 
 
