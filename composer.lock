@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "d3c16cb86c42230c6c023d9a5d9bcf42",
+=======
+    "content-hash": "8f387a0734f3bf879214e4aa2fca6e2f",
+>>>>>>> fb41e65b91d2d38ddf90440455861cfa01c272f8
     "packages": [
         {
             "name": "brick/math",
@@ -1335,6 +1339,7 @@
         },
         {
             "name": "laravel/sanctum",
+<<<<<<< HEAD
             "version": "v4.2.2",
             "source": {
                 "type": "git",
@@ -1345,6 +1350,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/sanctum/zipball/fd447754d2d3f56950d53b930128af2e3b617de9",
                 "reference": "fd447754d2d3f56950d53b930128af2e3b617de9",
+=======
+            "version": "v4.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/sanctum.git",
+                "reference": "47d26f1d310879ff757b971f5a6fc631d18663fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/sanctum/zipball/47d26f1d310879ff757b971f5a6fc631d18663fd",
+                "reference": "47d26f1d310879ff757b971f5a6fc631d18663fd",
+>>>>>>> fb41e65b91d2d38ddf90440455861cfa01c272f8
                 "shasum": ""
             },
             "require": {
@@ -1394,7 +1411,11 @@
                 "issues": "https://github.com/laravel/sanctum/issues",
                 "source": "https://github.com/laravel/sanctum"
             },
+<<<<<<< HEAD
             "time": "2026-01-06T23:11:51+00:00"
+=======
+            "time": "2026-01-11T18:20:25+00:00"
+>>>>>>> fb41e65b91d2d38ddf90440455861cfa01c272f8
         },
         {
             "name": "laravel/serializable-closure",
@@ -8441,5 +8462,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
