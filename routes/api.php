@@ -1,10 +1,5 @@
 <?php
 
-<<<<<<< HEAD
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClientController;
-=======
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SubscriptionsController;
 use App\Http\Controllers\PaymentsController ;
@@ -16,26 +11,11 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
->>>>>>> fb41e65b91d2d38ddf90440455861cfa01c272f8
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-<<<<<<< HEAD
-Route::get('/clients',[ClientController::class,'index']);
-Route::post('/clients/create',[ClientController::class,'create']);
-Route::get('/clients/{id}',[ClientController::class,'show']);
-Route::put('/clients/{id}',[ClientController::class,'edit']);
-Route::delete('/clients/{id}',[ClientController::class,'delete']);
-Route::get('/clients/{id}/subscriptions',[ClientController::class,'subscriptions']);
-Route::get('/clients/{id}/payments',[ClientController::class,'payments']);
-Route::get('/clients/active',[ClientController::class,'active']);
-Route::get('/clients/expired',[ClientController::class,'expired']);
-
-
-
-=======
 
 Route::prefix('auth')->group(function () {
 
@@ -78,6 +58,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('subscriptions/expiring', [SubscriptionsController::class, 'expiringSoon']);
     });
 });
->>>>>>> fb41e65b91d2d38ddf90440455861cfa01c272f8
 
 

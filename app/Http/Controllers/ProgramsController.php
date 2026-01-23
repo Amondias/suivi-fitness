@@ -7,59 +7,85 @@ use Illuminate\Http\Request;
 
 class ProgramsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $programs = Programs::all();
+
+        return response()->json([
+        'success' => true,
+        'data' => $programs
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'name'=>'required|max:255',
+            'description'=>'nullable',
+            'difficulty'=>'required|max:255',
+            'duration_weeks'=>'required|integer',
+            'goal'=>'required|max:255',
+            'is_public'=>'required|boolean',
+            'image'=>'nullable|string'
+        ]);
+        
+        $validateData['coach_id'] = auth()->id();
+        $program = Programs::create($validateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Programme créé avec succès',
+            'data' => [
+                'name' => $program->name,
+                'difficulty' => $program->difficulty,
+                'duration_weeks'=> $program->duration_weeks,
+                'goal'=> $program->goal,
+                'is_public'=> $program->is_public
+            ]
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    public function show($id)
     {
-        //
+        
+        $program = Programs::findOrFail($id);
+
+        return response()->json([
+        'success' => true,
+        'data' => $program
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Programs $programs)
+    public function edit(Request $request,$id)
     {
-        //
+        $program= Programs::findOrFail($id);
+        $validateData = $request->validate([
+            'name'=>'nullable|max:255',
+            'description'=>'nullable',
+            'difficulty'=>'nullable|max:255',
+            'duration_weeks'=>'nullable|integer',
+            'goal'=>'nullable|max:255',
+            'is_public'=>'nullable|boolean',
+            'image'=>'nullable|string'
+        ]);
+        $program->update($validateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Programme modifié avec succès',
+            'data' => $program
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Programs $programs)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Programs $programs)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Programs $programs)
-    {
-        //
+        $program= Program::findOrFail($id);
+        $program->delete();
+        return response()->json([
+            'message' => 'Programme supprimé avec succès'
+        ]);
     }
 }

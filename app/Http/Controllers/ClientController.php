@@ -10,15 +10,18 @@ class ClientController extends Controller
     public function index(Request $request){
         $query = User::where('role', 'client');
          
-        if ($request->filled('search')) {
+            if ($request->filled('search')) {
                 $query->where(function ($q) use ($request) {
                     $q->where('name', 'like', "%{$request->search}%")
                     ->orWhere('email', 'like', "%{$request->search}%");
                 });
+                return response()->json($query->get());
             }
+
 
             if ($request->filled('gender')) {
                 $query->where('gender', $request->gender);
+                return response()->json($query->get());
             }
 
             if ($request->filled('status')) {
@@ -31,14 +34,10 @@ class ClientController extends Controller
                         $q->where('end_date', '<', now());
                     }
                 });
+                return response()->json($query->get());
             }
 
-        // Si il y a des filtres, retourner juste la liste
-        if ($request->filled('search') || $request->filled('gender') || $request->filled('status')) {
-            return response()->json($query->get());
-        }
 
-        // Sinon, retourner le format structuré
         $clients = $query->with('subscriptions')->get();
         $total = $clients->count();
         $activeSubscriptions = $clients->filter(function ($client) {
