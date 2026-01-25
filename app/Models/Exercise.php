@@ -16,11 +16,12 @@ class Exercise extends Model
         'name',
         'description',
         'category_id',
-        'video_url',
         'difficulty',
-        'primary_muscle',
-        'secondary_muscles',
+        'muscle_group',
+        'equipment',
+        'video_url',
         'image',
+        'created_by',
     ];
 
     public function category(): BelongsTo
