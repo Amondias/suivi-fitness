@@ -7,10 +7,9 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SubscriptionsController;
 use App\Http\Controllers\PaymentsController ;
-use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ExerciseController;
+use App\Http\Controllers\ExerciseCategoriesController;
 use App\Http\Controllers\ProgramsController;
-use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ReportController;
 
 
@@ -55,10 +54,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('programs/{id}/subscribe', [ProgramsController::class, 'subscribe']);
     });
 
+    // Categories - Public endpoints (authentifiés)
+    Route::get('categories', [ExerciseCategoriesController::class, 'index']);
+    Route::get('categories/{exerciseCategory}', [ExerciseCategoriesController::class, 'show']);
+
+    // Exercices - Public endpoints (authentifiés)
+    Route::get('exercises', [ExerciseController::class, 'index']);
+    Route::get('exercises/{exercise}', [ExerciseController::class, 'show']);
+    Route::get('exercises/category/{categoryId}', [ExerciseController::class, 'showByCategory']);
+
     // Routes Coach
     Route::middleware(['role:coach,admin'])->group(function () {
         Route::apiResource('programs', ProgramsController::class)->except(['index', 'show']);
-        Route::apiResource('exercises', ExerciseController::class)->except(['index', 'show']);
+        Route::post('categories', [ExerciseCategoriesController::class, 'store']);
+        Route::put('categories/{exerciseCategory}', [ExerciseCategoriesController::class, 'update']);
+        Route::delete('categories/{exerciseCategory}', [ExerciseCategoriesController::class, 'destroy']);
+        Route::post('exercises', [ExerciseController::class, 'store']);
+        Route::put('exercises/{exercise}', [ExerciseController::class, 'update']);
+        Route::delete('exercises/{exercise}', [ExerciseController::class, 'destroy']);
         Route::get('clients', [ClientController::class, 'index']);
     });
 
