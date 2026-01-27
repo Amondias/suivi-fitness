@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Programs;
+use App\Models\UserPrograms;
 use Illuminate\Http\Request;
+use App\Models\ProgramExercises;
 
 class ProgramsController extends Controller
 {
@@ -18,15 +20,15 @@ class ProgramsController extends Controller
         ]);
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $validateData = $request->validate([
             'name'=>'required|max:255',
             'description'=>'nullable',
-            'difficulty'=>'required|max:255',
+            'difficulty'=>'required|max:255|in:beginner, intermediate, advanced',
             'duration_weeks'=>'required|integer',
-            'goal'=>'required|max:255',
-            'is_public'=>'required|boolean',
+            'goal'=>'required|max:255|in:weight_loss,muscle_gain,endurance, flexibility, general_fitness',
+            'is_public'=>'required|boolean|default:false',
             'image'=>'nullable|string'
         ]);
         
@@ -58,7 +60,7 @@ class ProgramsController extends Controller
         ]);
     }
 
-    public function edit(Request $request,$id)
+    public function update(Request $request,$id)
     {
         $program= Programs::findOrFail($id);
         $validateData = $request->validate([
@@ -82,10 +84,69 @@ class ProgramsController extends Controller
 
     public function destroy($id)
     {
-        $program= Program::findOrFail($id);
+        $program= Programs::findOrFail($id);
         $program->delete();
         return response()->json([
             'message' => 'Programme supprimé avec succès'
         ]);
     }
+    public function addExercise(Request $request, $id){
+
+        $program = Programs::findOrFail($id);
+
+        $validateData = $request->validate([
+            'exercise_id' => 'required|exists:exercises,id',
+            'sets' => 'required|integer|min:1',
+            'reps' => 'nullable|integer|min:1',
+            'rest_seconds' => 'nullable|integer|min:0',
+            'order'  => 'nullable|integer|min:0',
+            'day_of_week' =>'nullable|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday'
+        ]);
+
+        $programExercise = ProgramExercises::create([
+            'program_id'   => $program->id,
+            'exercise_id' => $validateData['exercise_id'],
+            'sets' => $validateData['sets'],
+            'reps' => $validateData['reps'],
+            'rest_seconds' => $validateData['rest_seconds'] ?? null,
+            'order' => $validateData['order'] ?? null,
+            'day_of_week' => $validateData['day_of_week'] ?? null,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Exercice ajouté au programme',
+            'data' => $programExercise
+        ], 201);
+    }   
+
+
+   public function subscribe($id){
+        $user = auth()->user();
+
+        $program = Programs::findOrFail($id);
+
+        $alreadySubscribed = UserPrograms::where('user_id', $user->id)
+            ->where('program_id', $program->id)
+            ->exists();
+
+        if ($alreadySubscribed) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Déjà inscrit à ce programme'
+            ], 409);
+        }
+
+        UserPrograms::create([
+            'user_id' => $user->id,
+            'program_id' => $program->id,
+            'started_at' => now(),
+            'status' => 'active'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Inscription réussie'
+        ], 201);
+    }
+
 }
