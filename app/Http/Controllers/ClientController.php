@@ -74,7 +74,7 @@ class ClientController extends Controller
         ]);
     }
 
-    public function create(Request $request){
+    public function store(Request $request){
         $validateData = $request->validate([
             'name'=>'required|max:255',
             'email'=>'required|email|unique:users',
@@ -125,7 +125,7 @@ class ClientController extends Controller
         ], 200);
     }
 
-    public function edit(Request $request, $id){
+    public function update(Request $request, $id){
         $client = User::where('role','client')->findOrFail($id);
         $validateData = $request->validate([
             'name'=>'nullable|max:255',
@@ -161,7 +161,7 @@ class ClientController extends Controller
             ]
         ], 200);
     }
-    public function delete($id){
+    public function destroy($id){
         $client = User::where('role','client')->findOrFail($id);
         $client->delete();
         return response()->json([

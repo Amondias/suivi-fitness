@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\SubscriptionsController;
-use App\Http\Controllers\PaymentsController ;
-use App\Http\Controllers\ExerciseController;
-use App\Http\Controllers\ExerciseCategoriesController;
-use App\Http\Controllers\ProgramsController;
-use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ExerciseController;
+use App\Http\Controllers\ProgramsController;
+use App\Http\Controllers\PaymentsController ;
+use App\Http\Controllers\SubscriptionsController;
+use App\Http\Controllers\ExerciseCategoriesController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -59,6 +60,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('exercises/{exercise}', [ExerciseController::class, 'destroy']);
         Route::post('programs/{id}/exercise',[ProgramsController::class,'addExercise']);
         Route::get('clients', [ClientController::class, 'index']);
+        Route::get('clients/{id}/subscriptions', [ClientController::class, 'subscriptions']);
+        Route::get('clients/active', [ClientController::class, 'active']);
+
     });
 
     // Routes Admin
@@ -69,6 +73,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('payments', PaymentsController::class);
         Route::get('reports/financial', [ReportController::class, 'financialReport']);
         Route::get('subscriptions/expiring', [SubscriptionsController::class, 'expiringSoon']);
+        Route::get('clients/{id}/payments', [ClientController::class, 'payments']);
+        Route::get('clients/expired', [ClientController::class, 'expired']);
+
+
     });
 });
 

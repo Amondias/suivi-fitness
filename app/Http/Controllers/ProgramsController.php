@@ -10,8 +10,7 @@ use App\Models\ProgramExercises;
 class ProgramsController extends Controller
 {
 
-    public function index()
-    {
+    public function index(){
         $programs = Programs::all();
 
         return response()->json([
@@ -20,19 +19,19 @@ class ProgramsController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $validateData = $request->validate([
             'name'=>'required|max:255',
             'description'=>'nullable',
             'difficulty'=>'required|max:255|in:beginner, intermediate, advanced',
             'duration_weeks'=>'required|integer',
-            'goal'=>'required|max:255|in:weight_loss,muscle_gain,endurance, flexibility, general_fitness',
-            'is_public'=>'required|boolean|default:false',
+            'goal'=>'required|in:weight_loss,muscle_gain,endurance,flexibility,general_fitness',
+            'is_public'=>'nullable|boolean',
             'image'=>'nullable|string'
         ]);
         
         $validateData['coach_id'] = auth()->id();
+        $validatedData['is_public'] = $validatedData['is_public'] ?? false;
         $program = Programs::create($validateData);
 
         return response()->json([
@@ -49,8 +48,7 @@ class ProgramsController extends Controller
     }
 
 
-    public function show($id)
-    {
+    public function show($id){
         
         $program = Programs::findOrFail($id);
 
@@ -60,15 +58,14 @@ class ProgramsController extends Controller
         ]);
     }
 
-    public function update(Request $request,$id)
-    {
+    public function update(Request $request,$id){
         $program= Programs::findOrFail($id);
         $validateData = $request->validate([
             'name'=>'nullable|max:255',
             'description'=>'nullable',
-            'difficulty'=>'nullable|max:255',
+            'difficulty'=>'nullable|in:beginner,intermediate,advanced',
             'duration_weeks'=>'nullable|integer',
-            'goal'=>'nullable|max:255',
+            'goal'=>'nullable|in:weight_loss,muscle_gain,endurance, flexibility, general_fitness',
             'is_public'=>'nullable|boolean',
             'image'=>'nullable|string'
         ]);
@@ -82,14 +79,14 @@ class ProgramsController extends Controller
     }
 
 
-    public function destroy($id)
-    {
+    public function destroy($id){
         $program= Programs::findOrFail($id);
         $program->delete();
         return response()->json([
             'message' => 'Programme supprimé avec succès'
         ]);
     }
+
     public function addExercise(Request $request, $id){
 
         $program = Programs::findOrFail($id);
@@ -147,6 +144,17 @@ class ProgramsController extends Controller
             'success' => true,
             'message' => 'Inscription réussie'
         ], 201);
+    }
+
+    public function myPrograms(){
+        $client = auth()->user();
+
+        $myPrograms = UserPrograms::where('user_id', $client->id)->with('program')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $myPrograms
+        ], 200);
     }
 
 }
