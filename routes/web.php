@@ -1,28 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SubscriptionPlansController;
+use App\Http\Controllers\PaymentsController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('index');
+})->name('home');
 
-// route publique pour les plans d'abonnement
-Route::get('/api/plans', [SubscriptionPlansController::class, 'index']);
-Route::get('/api/plans/{id}', [SubscriptionPlansController::class, 'show']);
+Route::resource('payments', PaymentsController::class);
+Route::get('payments/report', [PaymentsController::class, 'report'])->name('payments.report');
 
-// Admin routes
-if (app()->environment('testing')) {
-    // En environnement de test, pas d'authentification requise
-    Route::post('/api/plans', [SubscriptionPlansController::class, 'store']);
-    Route::put('/api/plans/{id}', [SubscriptionPlansController::class, 'update']);
-    Route::delete('/api/plans/{id}', [SubscriptionPlansController::class, 'destroy']);
-} else {
-    // En production, authentification requise
-    Route::middleware(['auth', 'admin'])->group(function () {
-        Route::post('/api/plans', [SubscriptionPlansController::class, 'store']);
-        Route::put('/api/plans/{id}', [SubscriptionPlansController::class, 'update']);
-        Route::delete('/api/plans/{id}', [SubscriptionPlansController::class, 'destroy']);
-    });
-}
-
+// Ajout d'une route login pour corriger l'erreur "Route [login] not defined"
+Route::get('/login', function () {
+    return response()->json(['message' => 'Login page placeholder']);
+})->name('login');
