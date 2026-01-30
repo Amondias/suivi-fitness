@@ -81,8 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('clients', ClientController::class);
         Route::apiResource('subscription-plans', SubscriptionPlansController::class);
         Route::apiResource('subscriptions', SubscriptionsController::class);
-        Route::apiResource('payments', PaymentsController::class); 
-        Route::post('payments/{payment}/process', [PaymentsController::class, 'processPayment']); 
+        Route::apiResource('payments', PaymentsController::class);  
         Route::post('payments/{payment}/refund', [PaymentsController::class, 'refund']); 
         Route::get('reports/financial', [ReportController::class, 'financialReport']); 
         Route::get('reports/payment-stats', [ReportController::class, 'paymentStats']); 
