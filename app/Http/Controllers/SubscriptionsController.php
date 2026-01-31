@@ -10,18 +10,14 @@ use Carbon\Carbon;
 
 class SubscriptionsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(): JsonResponse
     {
-        $subscriptions = Subscriptions::with('user', 'plan')->paginate(10);
+        $subscriptions = Subscriptions::with('user', 'plan')->paginate(5);
         return response()->json($subscriptions);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request): JsonResponse
     {
         $request->validate([
@@ -34,20 +30,16 @@ class SubscriptionsController extends Controller
 
         $subscription = Subscriptions::create($request->all());
 
-        return response()->json($subscription->load('user', 'plan'), 201);
+        return response()->json($subscription->load('user', 'plan'),);
     }
-
-    /**
-     * Display the specified resource.
-     */
+  
+    //afficher une un abonnement spécifique
     public function show(Subscriptions $subscription): JsonResponse
     {
         return response()->json($subscription->load('user', 'plan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, Subscriptions $subscription): JsonResponse
     {
         $request->validate([
@@ -63,9 +55,7 @@ class SubscriptionsController extends Controller
         return response()->json($subscription->load('user', 'plan'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Subscriptions $subscription): JsonResponse
     {
         $subscription->delete();
@@ -73,9 +63,7 @@ class SubscriptionsController extends Controller
         return response()->json(['message' => 'Subscription deleted successfully']);
     }
 
-    /**
-     * Get current user's subscription.
-     */
+  
     public function mySubscription(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -91,9 +79,7 @@ class SubscriptionsController extends Controller
         return response()->json($subscription);
     }
 
-    /**
-     * Get subscriptions expiring soon.
-     */
+
     public function expiringSoon(): JsonResponse
     {
         $expiringSoon = Subscriptions::where('status', 'active')
@@ -105,9 +91,7 @@ class SubscriptionsController extends Controller
         return response()->json($expiringSoon);
     }
 
-    /**
-     * Subscribe user to a plan.
-     */
+
     public function subscribe(Request $request): JsonResponse
     {
         $request->validate([
@@ -117,13 +101,13 @@ class SubscriptionsController extends Controller
         $user = $request->user();
         $plan = SubscriptionPlans::find($request->plan_id);
 
-        // Check if user already has an active subscription
+ 
         $existingSubscription = Subscriptions::where('user_id', $user->id)
             ->where('status', 'active')
             ->first();
 
         if ($existingSubscription) {
-            return response()->json(['message' => 'User already has an active subscription'], 400);
+            return response()->json(['message' => 'User already has an active subscription'],);
         }
 
         $startDate = Carbon::now();
@@ -134,9 +118,9 @@ class SubscriptionsController extends Controller
             'plan_id' => $plan->id,
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'status' => 'pending', // Will be activated after payment
+            'status' => 'pending',
         ]);
 
-        return response()->json($subscription->load('plan'), 201);
+        return response()->json($subscription->load('plan'),);
     }
 }

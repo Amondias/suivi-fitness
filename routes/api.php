@@ -7,8 +7,8 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\ExerciseCategoriesController;
 use App\Http\Controllers\ProgramsController;
 use App\Http\Controllers\ReportController;
-
-
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\SubscriptionPlansController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

@@ -9,7 +9,7 @@ use App\Models\Subscriptions;
 
 class SubscriptionPlans extends Model
 {
-    use HasFactory;
+    
 
     protected $table = 'subscription_plans';
 

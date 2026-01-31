@@ -6,26 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+   
     public function up(): void
     {
         Schema::create('subscription_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Basic, Premium, VIP
+            $table->string('name'); // Basics...
             $table->text('description');
-            $table->integer('duration_months'); // 1, 3, 6, 12
+            $table->integer('duration_months'); //1 mois, 3 mois...
             $table->decimal('price', 10, 2);
-            $table->text('features'); // Liste des avantages
+            $table->text('features');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+  
     public function down(): void
     {
         Schema::dropIfExists('subscription_plans');

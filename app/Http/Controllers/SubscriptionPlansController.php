@@ -32,7 +32,7 @@ class SubscriptionPlansController extends Controller
         ]);
 
         $plan = SubscriptionPlans::create($validated);
-        return response()->json(['success' => true, 'message' => 'Plan créé avec succès', 'data' => $plan], 201);
+        return response()->json(['success' => true, 'message' => 'Plan créé avec succès', 'data' => $plan],);
     }
 
     public function update(Request $request, $id): JsonResponse
@@ -59,7 +59,5 @@ class SubscriptionPlansController extends Controller
         return response()->json(['success' => true, 'message' => 'Plan supprimé avec succès']);
     }
 
-    public function create() {}
-    public function edit(SubscriptionPlans $subscriptionPlans) {}
 }
 
