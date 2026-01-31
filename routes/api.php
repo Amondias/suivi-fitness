@@ -19,15 +19,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::get('/clients',[ClientController::class,'index']);
-Route::post('/clients/create',[ClientController::class,'create']);
-Route::get('/clients/{id}',[ClientController::class,'show']);
-Route::put('/clients/{id}',[ClientController::class,'edit']);
-Route::delete('/clients/{id}',[ClientController::class,'delete']);
-Route::get('/clients/{id}/subscriptions',[ClientController::class,'subscriptions']);
-Route::get('/clients/{id}/payments',[ClientController::class,'payments']); 
-Route::get('/clients/active',[ClientController::class,'active']);
-Route::get('/clients/expired',[ClientController::class,'expired']);
 
 
 Route::prefix('auth')->group(function () {
@@ -73,8 +64,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('exercises', [ExerciseController::class, 'store']);
         Route::put('exercises/{exercise}', [ExerciseController::class, 'update']);
         Route::delete('exercises/{exercise}', [ExerciseController::class, 'destroy']);
+        Route::post('programs/{id}/exercise',[ProgramsController::class,'addExercise']);
         Route::get('clients', [ClientController::class, 'index']);
-    });
+        Route::get('clients/{id}/subscriptions', [ClientController::class, 'subscriptions']);
+        Route::get('clients/active', [ClientController::class, 'active']);    
+        });
 
     // Routes Admin
     Route::middleware(['role:admin'])->group(function () {
@@ -87,6 +81,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('reports/payment-stats', [ReportController::class, 'paymentStats']); 
         Route::get('reports/subscription-analytics', [ReportController::class, 'subscriptionAnalytics']); 
         Route::get('subscriptions/expiring', [SubscriptionsController::class, 'expiringSoon']);
+        Route::get('clients/{id}/payments', [ClientController::class, 'payments']);
+        Route::get('clients/expired', [ClientController::class, 'expired']);
     });
 });
 
