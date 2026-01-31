@@ -3,63 +3,158 @@
 namespace App\Http\Controllers;
 
 use App\Models\Programs;
+use App\Models\UserPrograms;
 use Illuminate\Http\Request;
+use App\Models\ProgramExercises;
 
 class ProgramsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+
+    public function index(){
+        $programs = Programs::all();
+
+        return response()->json([
+        'success' => true,
+        'data' => $programs
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function store(Request $request){
+        $validateData = $request->validate([
+            'name'=>'required|max:255',
+            'description'=>'nullable',
+            'difficulty'=>'required|max:255|in:beginner, intermediate, advanced',
+            'duration_weeks'=>'required|integer',
+            'goal'=>'required|in:weight_loss,muscle_gain,endurance,flexibility,general_fitness',
+            'is_public'=>'nullable|boolean',
+            'image'=>'nullable|string'
+        ]);
+        
+        $validateData['coach_id'] = auth()->id();
+        $validatedData['is_public'] = $validatedData['is_public'] ?? false;
+        $program = Programs::create($validateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Programme créé avec succès',
+            'data' => [
+                'name' => $program->name,
+                'difficulty' => $program->difficulty,
+                'duration_weeks'=> $program->duration_weeks,
+                'goal'=> $program->goal,
+                'is_public'=> $program->is_public
+            ]
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+
+    public function show($id){
+        
+        $program = Programs::findOrFail($id);
+
+        return response()->json([
+        'success' => true,
+        'data' => $program
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Programs $programs)
-    {
-        //
+    public function update(Request $request,$id){
+        $program= Programs::findOrFail($id);
+        $validateData = $request->validate([
+            'name'=>'nullable|max:255',
+            'description'=>'nullable',
+            'difficulty'=>'nullable|in:beginner,intermediate,advanced',
+            'duration_weeks'=>'nullable|integer',
+            'goal'=>'nullable|in:weight_loss,muscle_gain,endurance, flexibility, general_fitness',
+            'is_public'=>'nullable|boolean',
+            'image'=>'nullable|string'
+        ]);
+        $program->update($validateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Programme modifié avec succès',
+            'data' => $program
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Programs $programs)
-    {
-        //
+
+    public function destroy($id){
+        $program= Programs::findOrFail($id);
+        $program->delete();
+        return response()->json([
+            'message' => 'Programme supprimé avec succès'
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Programs $programs)
-    {
-        //
+    public function addExercise(Request $request, $id){
+
+        $program = Programs::findOrFail($id);
+
+        $validateData = $request->validate([
+            'exercise_id' => 'required|exists:exercises,id',
+            'sets' => 'required|integer|min:1',
+            'reps' => 'nullable|integer|min:1',
+            'rest_seconds' => 'nullable|integer|min:0',
+            'order'  => 'nullable|integer|min:0',
+            'day_of_week' =>'nullable|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday'
+        ]);
+
+        $programExercise = ProgramExercises::create([
+            'program_id'   => $program->id,
+            'exercise_id' => $validateData['exercise_id'],
+            'sets' => $validateData['sets'],
+            'reps' => $validateData['reps'],
+            'rest_seconds' => $validateData['rest_seconds'] ?? null,
+            'order' => $validateData['order'] ?? null,
+            'day_of_week' => $validateData['day_of_week'] ?? null,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Exercice ajouté au programme',
+            'data' => $programExercise
+        ], 201);
+    }   
+
+
+   public function subscribe($id){
+        $user = auth()->user();
+
+        $program = Programs::findOrFail($id);
+
+        $alreadySubscribed = UserPrograms::where('user_id', $user->id)
+            ->where('program_id', $program->id)
+            ->exists();
+
+        if ($alreadySubscribed) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Déjà inscrit à ce programme'
+            ], 409);
+        }
+
+        UserPrograms::create([
+            'user_id' => $user->id,
+            'program_id' => $program->id,
+            'started_at' => now(),
+            'status' => 'active'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Inscription réussie'
+        ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Programs $programs)
-    {
-        //
+    public function myPrograms(){
+        $client = auth()->user();
+
+        $myPrograms = UserPrograms::where('user_id', $client->id)->with('program')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $myPrograms
+        ], 200);
     }
+
 }
